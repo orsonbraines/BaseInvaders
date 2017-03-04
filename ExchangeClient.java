@@ -42,7 +42,7 @@ static double mapwidth, mapheight,captureradius, visionradius, friction,
             int counter = 0;
             try{
                 System.out.println("starting thread");
-                Motion motion = new Motion(new V2d(0,0), data.currentPlayer);
+                Motion motion = new Motion(new V2d(0,0), data.currentPlayer, mapwidth, mapheight);
                 boolean drifting = false;
                 while ((line = bin.readLine()) != null) {
                     //System.out.println("Received {" + line + "}");
@@ -84,7 +84,7 @@ static double mapwidth, mapheight,captureradius, visionradius, friction,
                         
                         
                         Mine closest = data.closestMine();
-                        if(closest != null && !closest.r.equals(motion.target)){
+                        if(closest != null && !closest.r.equals(motion.target, mapwidth, mapheight)){
                             System.out.println("Changing target to closest mine");
                             motion.changeTarget(closest.r);
                         }
@@ -101,7 +101,7 @@ static double mapwidth, mapheight,captureradius, visionradius, friction,
                         else if(!drifting){
                             drifting = true;
                             System.out.println("starting drifting");
-                            write(pout, "ACCELERATE 0.1 1");
+                            write(pout, "ACCELERATE 0.2 1");
                         }
 
                         
@@ -139,6 +139,7 @@ static double mapwidth, mapheight,captureradius, visionradius, friction,
                         scandelay = Double.parseDouble(results[24]);
                         
                         System.out.println("scandelay " +scandelay);
+                        data.setSize(mapwidth, mapheight);
                     }
                 }
             } catch(IOException ex){

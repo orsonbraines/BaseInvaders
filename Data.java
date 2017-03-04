@@ -7,6 +7,7 @@ class Data{
     Player currentPlayer;
     volatile int minesOwned;
     String username;
+    double mapWidth, mapHeight;
     
     Data(String username){
         mines = new Vector<>();
@@ -15,6 +16,13 @@ class Data{
         currentPlayer = new Player(0,0,0,0);
         minesOwned = 0;
         this.username = username;
+        this.mapWidth = 10000;
+        this.mapHeight = 10000;
+    }
+    
+    void setSize(double mapWidth, double mapHeight){
+        this.mapWidth = mapWidth;
+        this.mapHeight = mapHeight;
     }
     
     void clear(){
@@ -76,7 +84,7 @@ class Data{
         Mine m = null;
         for(Mine mine : mines){
             if(mine.state != Mine.State.OWNED){
-                double dist2 = currentPlayer.r.dist2(mine.r);
+                double dist2 = currentPlayer.r.dist2(mine.r, mapWidth, mapHeight);
                 if(dist2 < mindist2) {
                     mindist2 = dist2;
                     m = mine;

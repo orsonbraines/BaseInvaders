@@ -17,8 +17,16 @@ class V2d{
         return (x - v.x)*(x - v.x) + (y - v.y)*(y - v.y);
     }
     
+    double dist2(V2d v, double mapWidth, double mapHeight){
+        return ((x - v.x)%mapWidth) * ((x - v.x)%mapWidth) + ((y - v.y) % mapHeight) * ((x - v.x) % mapHeight);
+    }
+    
     boolean equals(V2d v){
         return dist2(v) < 1e-3;
+    }
+    
+    boolean equals(V2d v, double mapWidth, double mapHeight){
+        return dist2(v, mapWidth, mapHeight) < 1e-5;
     }
     
     double norm2(){

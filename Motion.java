@@ -7,15 +7,26 @@ public class Motion {
     Player player;
     double startingDistance;
     boolean accelerating;
+    double mapWidth, mapHeight;
     
-    Motion(V2d target, Player player){
+    Motion(V2d target, Player player, double mapWidth, double mapHeight){
         this.target = target;
         this.player = player;
         startingDistance = V2d.sub(target, player.r).norm();
         accelerating = false;
+        this.mapWidth = mapWidth;
+        this.mapHeight = mapHeight;
+    }
+    
+    void wrapTarget(){
+        if(target.x - player.r.x > mapWidth/2) target.x -= mapWidth;
+        if(target.x - player.r.x < -mapWidth/2) target.x += mapWidth;
+        if(target.y - player.r.y > mapHeight/2) target.y -= mapHeight;
+        if(target.y - player.r.y < -mapHeight/2) target.y += mapHeight;
     }
     
     String move(){
+        wrapTarget();
         V2d dir = V2d.sub(target, player.r);
         if(player.v.norm() < 0.1 && player.v.norm() / dir.norm() < 0.0002){
             startingDistance = dir.norm();
