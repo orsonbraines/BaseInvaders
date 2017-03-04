@@ -28,12 +28,44 @@ public class ExchangeClient {
         final BufferedReader bin = new BufferedReader(new InputStreamReader(socket.getInputStream()));
         pout.println(args[2] + " " + args[3]);
         
+        final Data data = new Data();
+        
         new Thread(()->{
             String line;
             try{
                 System.out.println("starting thread");
                 while ((line = bin.readLine()) != null) {
-                System.out.println("Received {" + line + "}");
+                    System.out.println("Received {" + line + "}");
+                    Scanner sc = new Scanner(line);
+                    String type = sc.next();
+                    if(type.equals("STATUS_OUT") || type.equals("SCAN_OUT")){
+                        data.clear();
+                        
+                        data.updateCurrentPlayer(sc.nextDouble(),sc.nextDouble(),sc.nextDouble(),sc.nextDouble());
+                        
+                        sc.next(); //MINES
+                        
+                        int numMines = sc.nextInt();
+                        for(int i=0;i<numMines; i++){
+                            data.addMine(sc.nextInt(), sc.nextDouble(), sc.nextDouble());
+                        }
+                        
+                        sc.next(); // PLAYERS
+                        
+                        int numPlayers = sc.nextInt();
+                        for(int i=0;i<numPlayers; i++){
+                            data.addPlayer(sc.nextDouble(),sc.nextDouble(),sc.nextDouble(),sc.nextDouble());
+                        }
+                        
+                        sc.next(); // BOMBS
+                        
+                        int numBombs = sc.nextInt();
+                        for(int i=0;i<numBombs; i++){
+                            data.addBomb(sc.nextDouble(), sc.nextDouble());
+                        }
+                        
+                        System.out.println(data);
+                    }
                 }
             } catch(IOException ex){
                 System.err.println("IO error, exiting output thread");
