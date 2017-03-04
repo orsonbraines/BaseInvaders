@@ -13,10 +13,10 @@ import java.net.Socket;
  * @author atamarkin2
  */
 public class ExchangeClient {
-    
+
     //static Vector<Integer> oldScores, newScores;
 
-static double mapwidth, mapheight,captureradius, visionradius, friction, 
+static double mapwidth, mapheight,captureradius, visionradius, friction,
             bfriction, bombpr, bomber, bombdelay, bombpower, scanradius, scandelay;
 
     /**
@@ -32,11 +32,11 @@ static double mapwidth, mapheight,captureradius, visionradius, friction,
         PrintStream pout = new PrintStream(socket.getOutputStream(), true);
         final BufferedReader bin = new BufferedReader(new InputStreamReader(socket.getInputStream()));
         pout.println(args[2] + " " + args[3]);
-        
+
         final String username = args[2];
         final Data data = new Data(username);
         pout.println("CONFIGURATIONS");
-        
+
         new Thread(()->{
             String line;
             int counter = 0;
@@ -52,43 +52,43 @@ static double mapwidth, mapheight,captureradius, visionradius, friction,
                     if(type.equals("STATUS_OUT") || type.equals("SCAN_OUT")){
                         //System.out.println("status");
                         data.clear();
-                        
+
                         data.updateCurrentPlayer(sc.nextDouble(),sc.nextDouble(),sc.nextDouble(),sc.nextDouble());
-                        
+
                         sc.next(); //MINES
-                        
+
                         int numMines = sc.nextInt();
                         for(int i=0;i<numMines; i++){
                             data.addMine(sc.next(), sc.nextDouble(), sc.nextDouble());
                         }
-                        
+
                         sc.next(); // PLAYERS
-                        
+
                         int numPlayers = sc.nextInt();
                         for(int i=0;i<numPlayers; i++){
                             data.addPlayer(sc.nextDouble(),sc.nextDouble(),sc.nextDouble(),sc.nextDouble());
                         }
-                        
+
                         sc.next(); // BOMBS
-                        
+
                         int numBombs = sc.nextInt();
                         for(int i=0;i<numBombs; i++){
                             data.addBomb(sc.nextDouble(), sc.nextDouble());
                         }
-                        
+
                         if(counter % 200 == 0) System.out.println(data);
                         counter++;
-                        
+
                             //write(pout, Motion.moveTowards(data.currentPlayer.r, data.currentPlayer.v, new V2d(2500,2500)));
                            // System.out.println("v" + data.currentPlayer.v);
-                        
-                        
+
+
                         Mine closest = data.closestMine();
                         if(closest != null && !closest.r.equals(motion.target)){
                             System.out.println("Changing target to closest mine");
                             motion.changeTarget(closest.r);
                         }
-                        
+
                         if(closest != null){
                             drifting = false;
                             String cmd = motion.move();
@@ -104,7 +104,7 @@ static double mapwidth, mapheight,captureradius, visionradius, friction,
                             write(pout, "ACCELERATE 0.1 1");
                         }
 
-                        
+
                     }
                     else if(type.equals("SCOREBOARD_OUT")){
                         //System.out.println(line);
@@ -126,7 +126,7 @@ static double mapwidth, mapheight,captureradius, visionradius, friction,
                         // System.out.println(Arrays.toString(results));
 
                         mapwidth = Double.parseDouble(results[2]);
-                        mapheight = Double.parseDouble(results[4]); 
+                        mapheight = Double.parseDouble(results[4]);
                         captureradius = Double.parseDouble(results[6]);
                         visionradius = Double.parseDouble(results[8]);
                         friction = Double.parseDouble(results[10]);
@@ -137,7 +137,7 @@ static double mapwidth, mapheight,captureradius, visionradius, friction,
                         bombpower = Double.parseDouble(results[20]);
                         scanradius = Double.parseDouble(results[22]);
                         scandelay = Double.parseDouble(results[24]);
-                        
+
                         System.out.println("scandelay " +scandelay);
                     }
                 }
@@ -145,7 +145,16 @@ static double mapwidth, mapheight,captureradius, visionradius, friction,
                 System.err.println("IO error, exiting output thread");
             }
         }).start();
-        
+
+        new Thread(()->{
+          while(true){
+            write(pout, placeMoveBomb(data.currentPlayer.r, 0.5));
+            try{
+            Thread.sleep(1000);
+            } catch(InterruptedException ex){}
+          }
+        }
+
         new Thread(()->{
             while(true){
                 write(pout, "STATUS");
@@ -154,7 +163,7 @@ static double mapwidth, mapheight,captureradius, visionradius, friction,
                 } catch(InterruptedException ex){}
             }
         }).start();
-        
+
         new Thread(()->{
             while(true){
                 pout.println("SCOREBOARD");
@@ -164,19 +173,19 @@ static double mapwidth, mapheight,captureradius, visionradius, friction,
             }
         }).start();
 
-        
+
         Scanner stdin = new Scanner(System.in);
         while(stdin.hasNextLine()){
             write(pout,stdin.nextLine());
             //pout.println(Motion.moveTowards(data.currentPlayer.r, data.currentPlayer.v, new V2d(2500,2500)));
         }
-        
+
         pout.println("CLOSE_CONNECTION");
         pout.flush();
         pout.close();
         bin.close();
     }
-    
+
     static void write(PrintStream pout, String cmd){
         synchronized(pout){
             //System.out.println("outputting cmd : " + cmd);

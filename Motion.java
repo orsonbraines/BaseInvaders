@@ -73,4 +73,8 @@ public class Motion {
         return res;
     }
 
+    public String placeMoveBomb(V2d r, double fuse){
+      System.out.println("BOMB " + r.x +" "+ r.y + " "+ fuse);
+    }
+
 }
