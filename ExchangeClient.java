@@ -155,14 +155,14 @@ static double mapwidth, mapheight,captureradius, visionradius, friction,
             }
         }).start();
         
-        // new Thread(()->{
-            // while(true){
-                // pout.println("SCOREBOARD");
-                // try{
-                // Thread.sleep(20);
-                // } catch(InterruptedException ex){}
-            // }
-        // }).start();
+        new Thread(()->{
+            while(true){
+                pout.println("SCOREBOARD");
+                try{
+                Thread.sleep(20);
+                } catch(InterruptedException ex){}
+            }
+        }).start();
 
         
         Scanner stdin = new Scanner(System.in);
