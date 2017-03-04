@@ -42,14 +42,15 @@ static double mapwidth, mapheight,captureradius, visionradius, friction,
             int counter = 0;
             try{
                 System.out.println("starting thread");
-                Motion motion = new Motion(new V2d(7500,2500), data.currentPlayer);
-                pout.println("BRAKE");
+                Motion motion = new Motion(new V2d(0,0), data.currentPlayer);
+                boolean drifting = false;
                 while ((line = bin.readLine()) != null) {
                     //System.out.println("Received {" + line + "}");
                     Scanner sc = new Scanner(line);
                     String type = sc.next();
 
                     if(type.equals("STATUS_OUT") || type.equals("SCAN_OUT")){
+                        //System.out.println("status");
                         data.clear();
                         
                         data.updateCurrentPlayer(sc.nextDouble(),sc.nextDouble(),sc.nextDouble(),sc.nextDouble());
@@ -75,7 +76,7 @@ static double mapwidth, mapheight,captureradius, visionradius, friction,
                             data.addBomb(sc.nextDouble(), sc.nextDouble());
                         }
                         
-                        //if(counter % 200 == 0) System.out.println(data);
+                        if(counter % 200 == 0) System.out.println(data);
                         counter++;
                         
                             //write(pout, Motion.moveTowards(data.currentPlayer.r, data.currentPlayer.v, new V2d(2500,2500)));
@@ -83,18 +84,24 @@ static double mapwidth, mapheight,captureradius, visionradius, friction,
                         
                         
                         Mine closest = data.closestMine();
-                        if(closest == null && data.currentPlayer.r.dist2(motion.target) < 30000){
-                             motion.changeTarget(new V2d(Math.random()*5000, Math.random()*5000));
-                        }
-                        else if(closest != null && !closest.r.equals(motion.target)){
+                        if(closest != null && !closest.r.equals(motion.target)){
+                            System.out.println("Changing target to closest mine");
                             motion.changeTarget(closest.r);
                         }
                         
-                        String cmd = motion.move();
-                        if(cmd.length() > 0) {
-                            System.out.println(cmd);
-                            System.out.println(V2d.sub(motion.target, data.currentPlayer.r));
-                            write(pout,cmd);
+                        if(closest != null){
+                            drifting = false;
+                            String cmd = motion.move();
+                            if(cmd.length() > 0) {
+                                System.out.println(cmd);
+                                System.out.println(V2d.sub(motion.target, data.currentPlayer.r));
+                                write(pout,cmd);
+                            }
+                        }
+                        else if(!drifting){
+                            drifting = true;
+                            System.out.println("starting drifting");
+                            write(pout, "ACCELERATE 0.1 1");
                         }
 
                         

@@ -11,7 +11,7 @@ class Mine{
     Mine(String user, String owner, double x, double y){
         this.owner = owner;
         r = new V2d(x,y);
-        state = user == owner ? State.OWNED : State.NOT_OWNED;
+        state = user.equals(owner) ? State.OWNED : State.NOT_OWNED;
         
     }
     

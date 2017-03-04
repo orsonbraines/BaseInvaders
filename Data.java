@@ -38,7 +38,7 @@ class Data{
         for(Mine mine:mines){
             if(mine.r.equals(new V2d(x,y))){
                 mine.owner = owner;
-                mine.state = owner == username ? Mine.State.OWNED : Mine.State.NOT_OWNED; 
+                mine.state = owner.equals(username) ? Mine.State.OWNED : Mine.State.NOT_OWNED; 
                 return;
             }
         }
