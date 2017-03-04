@@ -16,6 +16,9 @@ public class ExchangeClient {
     
     //static Vector<Integer> oldScores, newScores;
 
+static double mapwidth, mapheight,captureradius, visionradius, friction, 
+            bfriction, bombpr, bomber, bombdelay, bombpower, scanradius, scandelay;
+
     /**
      * @param args the command line arguments
      * @throws java.io.IOException
@@ -30,14 +33,9 @@ public class ExchangeClient {
         final BufferedReader bin = new BufferedReader(new InputStreamReader(socket.getInputStream()));
         pout.println(args[2] + " " + args[3]);
         
-        
         final String username = args[2];
         final Data data = new Data(username);
-        
-        //final Vector<String> users = new Vector<>();
-        //oldScores = new Vector<>();
-        //newScores = new Vector<>();
-        
+        pout.println("CONFIGURATIONS");
         
         new Thread(()->{
             String line;
@@ -48,6 +46,7 @@ public class ExchangeClient {
                     //System.out.println("Received {" + line + "}");
                     Scanner sc = new Scanner(line);
                     String type = sc.next();
+
                     if(type.equals("STATUS_OUT") || type.equals("SCAN_OUT")){
                         data.clear();
                         
@@ -92,6 +91,24 @@ public class ExchangeClient {
                                 sc.nextInt();
                             }
                         }
+                    }
+
+                    else if(type.equals("CONFIGURATIONS_OUT")){
+                        String [] results = line.split(" ");
+                        // System.out.println(Arrays.toString(results));
+
+                        mapwidth = Double.parseDouble(results[2]);
+                        mapheight = Double.parseDouble(results[4]); 
+                        captureradius = Double.parseDouble(results[6]);
+                        visionradius = Double.parseDouble(results[8]);
+                        friction = Double.parseDouble(results[10]);
+                        bfriction = Double.parseDouble(results[12]);
+                        bombpr = Double.parseDouble(results[14]);
+                        bomber = Double.parseDouble(results[16]);
+                        bombdelay = Double.parseDouble(results[18]);
+                        bombpower = Double.parseDouble(results[20]);
+                        scanradius = Double.parseDouble(results[22]);
+                        scandelay = Double.parseDouble(results[24]);
                     }
                 }
             } catch(IOException ex){
