@@ -32,10 +32,11 @@ public class ExchangeClient {
         
         new Thread(()->{
             String line;
+            int counter = 0;
             try{
                 System.out.println("starting thread");
                 while ((line = bin.readLine()) != null) {
-                    System.out.println("Received {" + line + "}");
+                    //System.out.println("Received {" + line + "}");
                     Scanner sc = new Scanner(line);
                     String type = sc.next();
                     if(type.equals("STATUS_OUT") || type.equals("SCAN_OUT")){
@@ -47,7 +48,9 @@ public class ExchangeClient {
                         
                         int numMines = sc.nextInt();
                         for(int i=0;i<numMines; i++){
-                            data.addMine(sc.nextInt(), sc.nextDouble(), sc.nextDouble());
+                            String ownerStr = sc.next();
+                            int owner = ownerStr.equals("--") ? -1 : Integer.parseInt(ownerStr); 
+                            data.addMine(owner, sc.nextDouble(), sc.nextDouble());
                         }
                         
                         sc.next(); // PLAYERS
@@ -64,11 +67,21 @@ public class ExchangeClient {
                             data.addBomb(sc.nextDouble(), sc.nextDouble());
                         }
                         
-                        System.out.println(data);
+                        if(counter % 200 == 0) System.out.println(data);
+                        counter++;
                     }
                 }
             } catch(IOException ex){
                 System.err.println("IO error, exiting output thread");
+            }
+        }).start();
+        
+        new Thread(()->{
+            while(true){
+                pout.println("STATUS");
+                try{
+                Thread.sleep(25);
+                } catch(InterruptedException ex){}
             }
         }).start();
 

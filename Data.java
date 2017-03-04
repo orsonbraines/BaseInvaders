@@ -16,6 +16,9 @@ class Data{
     void clear(){
         players.clear();
         bombs.clear();
+        for(Mine mine:mines){
+            mine.current = false;
+        }
     }
     
     void updateCurrentPlayer(double x, double y, double vx, double vy){
@@ -29,7 +32,10 @@ class Data{
     
     void addMine(int owner, double x, double y){
         for(Mine mine:mines){
-            if(mine.r.equals(new V2d(x,y))) return;
+            if(mine.r.equals(new V2d(x,y))){
+                mine.current = true;
+                return;
+            }
         }
         mines.add(new Mine(owner,x,y));
     }
