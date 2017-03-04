@@ -150,7 +150,9 @@ static double mapwidth, mapheight,captureradius, visionradius, friction,
 
         new Thread(()->{
           while(true){
-            write(pout, motion.placeMoveBomb(data.currentPlayer.r, 0.5));
+              String str = motion.placeMoveBomb(data.currentPlayer.r, 2);
+            write(pout, str);
+            System.out.println(str);
             try{
             Thread.sleep(1000);
             } catch(InterruptedException ex){}

@@ -84,7 +84,7 @@ public class Motion {
         return res;
     }
 
-    public String placeMoveBomb(V2d r, double fuse){
+    public String placeMoveBomb(V2d r, int fuse){
       return "BOMB " + r.x +" "+ r.y + " "+ fuse;
     }
 
