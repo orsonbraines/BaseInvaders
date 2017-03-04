@@ -14,6 +14,9 @@ import java.net.Socket;
  */
 public class ExchangeClient {
 
+static double mapwidth, mapheight,captureradius, visionradius, friction, 
+            bfriction, bombpr, bomber, bombdelay, bombpower, scanradius, scandelay;
+
     /**
      * @param args the command line arguments
      * @throws java.io.IOException
@@ -29,6 +32,10 @@ public class ExchangeClient {
         pout.println(args[2] + " " + args[3]);
         
         final Data data = new Data();
+
+        
+        
+        pout.println("CONFIGURATIONS");
         
         new Thread(()->{
             String line;
@@ -39,6 +46,7 @@ public class ExchangeClient {
                     //System.out.println("Received {" + line + "}");
                     Scanner sc = new Scanner(line);
                     String type = sc.next();
+
                     if(type.equals("STATUS_OUT") || type.equals("SCAN_OUT")){
                         data.clear();
                         
@@ -69,6 +77,24 @@ public class ExchangeClient {
                         
                         if(counter % 200 == 0) System.out.println(data);
                         counter++;
+                    }
+
+                    else if(type.equals("CONFIGURATIONS_OUT")){
+                        String [] results = line.split(" ");
+                        // System.out.println(Arrays.toString(results));
+
+                        mapwidth = Double.parseDouble(results[2]);
+                        mapheight = Double.parseDouble(results[4]); 
+                        captureradius = Double.parseDouble(results[6]);
+                        visionradius = Double.parseDouble(results[8]);
+                        friction = Double.parseDouble(results[10]);
+                        bfriction = Double.parseDouble(results[12]);
+                        bombpr = Double.parseDouble(results[14]);
+                        bomber = Double.parseDouble(results[16]);
+                        bombdelay = Double.parseDouble(results[18]);
+                        bombpower = Double.parseDouble(results[20]);
+                        scanradius = Double.parseDouble(results[22]);
+                        scandelay = Double.parseDouble(results[24]);
                     }
                 }
             } catch(IOException ex){
