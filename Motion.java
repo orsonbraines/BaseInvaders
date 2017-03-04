@@ -3,8 +3,8 @@
  */
 public class Motion {
 
-    public void move_towards(double x, double y, double dx, double dy, double px, double py) {
-        double dist_x = px - x;
+    public void move_towards(V2d r,V2d v, Mine mine) {
+        double px = mine.r.x -
         double dist_y = py - y;
         double magnitude_x = dist_x - dx;
         double magnitude_y = dist_y - dy;
@@ -13,6 +13,6 @@ public class Motion {
         System.out.println("ACCELERATE " + theta + " " + mag);
     }
 
-    
+
 
 }
