@@ -2,7 +2,7 @@
  * Created by anirudhiyer on 3/3/17.
  */
 public class Motion {
-    
+
     V2d target;
     Player player;
     double startingDistance;
@@ -24,7 +24,7 @@ public class Motion {
         if(target.y - player.r.y > mapHeight/2) target.y -= mapHeight;
         if(target.y - player.r.y < -mapHeight/2) target.y += mapHeight;
     }
-    
+
     String move(){
         wrapTarget();
         V2d dir = V2d.sub(target, player.r);
@@ -47,12 +47,13 @@ public class Motion {
         }
         return "";
     }
-    
+
     void changeTarget(V2d target){
         this.target = target;
         V2d dir = V2d.sub(target, player.r);
         startingDistance = dir.norm();
     }
+
 
     public static String move_towards(double x, double y, double dx, double dy, double px, double py) {
         double dist_x = px - x;
