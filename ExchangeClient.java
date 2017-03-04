@@ -35,6 +35,7 @@ static double mapwidth, mapheight,captureradius, visionradius, friction,
 
         final String username = args[2];
         final Data data = new Data(username);
+        Motion motion = new Motion(new V2d(0,0), data.currentPlayer, mapwidth, mapheight);
         pout.println("CONFIGURATIONS");
 
         new Thread(()->{
@@ -42,7 +43,7 @@ static double mapwidth, mapheight,captureradius, visionradius, friction,
             int counter = 0;
             try{
                 System.out.println("starting thread");
-                Motion motion = new Motion(new V2d(0,0), data.currentPlayer, mapwidth, mapheight);
+                
                 boolean drifting = false;
                 while ((line = bin.readLine()) != null) {
                     //System.out.println("Received {" + line + "}");
@@ -149,12 +150,12 @@ static double mapwidth, mapheight,captureradius, visionradius, friction,
 
         new Thread(()->{
           while(true){
-            write(pout, placeMoveBomb(data.currentPlayer.r, 0.5));
+            write(pout, motion.placeMoveBomb(data.currentPlayer.r, 0.5));
             try{
             Thread.sleep(1000);
             } catch(InterruptedException ex){}
           }
-        }
+        }).start();
 
         new Thread(()->{
             while(true){
