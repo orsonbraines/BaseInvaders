@@ -43,7 +43,7 @@ static double mapwidth, mapheight,captureradius, visionradius, friction,
             int counter = 0;
             try{
                 System.out.println("starting thread");
-                
+
                 boolean drifting = false;
                 while ((line = bin.readLine()) != null) {
                     //System.out.println("Received {" + line + "}");
@@ -97,12 +97,15 @@ static double mapwidth, mapheight,captureradius, visionradius, friction,
                                 System.out.println(cmd);
                                 System.out.println(V2d.sub(motion.target, data.currentPlayer.r));
                                 write(pout,cmd);
+                                write(pout, ("BOMB" + " " + data.currentPlayer.r.x + " " + data.currentPlayer.r.y + " " + "2"));
                             }
                         }
                         else if(!drifting){
                             drifting = true;
                             System.out.println("starting drifting");
                             write(pout, "ACCELERATE 0.2 1");
+                            write(pout, ("BOMB" + " " + data.currentPlayer.r.x + " " + data.currentPlayer.r.y + " " + "2"));
+                            System.out.println("BOMB RELEASED");
                         }
 
 
