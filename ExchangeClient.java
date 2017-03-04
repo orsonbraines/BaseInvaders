@@ -49,6 +49,9 @@ static double mapwidth, mapheight,captureradius, visionradius, friction,
                     //System.out.println("Received {" + line + "}");
                     Scanner sc = new Scanner(line);
                     String type = sc.next();
+                    if(type.equals("BOMB_OUT")){
+                      System.out.println("Bombs");
+                    }
 
                     if(type.equals("STATUS_OUT") || type.equals("SCAN_OUT")){
                         //System.out.println("status");
@@ -97,15 +100,14 @@ static double mapwidth, mapheight,captureradius, visionradius, friction,
                                 System.out.println(cmd);
                                 System.out.println(V2d.sub(motion.target, data.currentPlayer.r));
                                 write(pout,cmd);
-                                write(pout, ("BOMB" + " " + data.currentPlayer.r.x + " " + data.currentPlayer.r.y + " " + "2"));
+
                             }
                         }
                         else if(!drifting){
                             drifting = true;
                             System.out.println("starting drifting");
                             write(pout, "ACCELERATE 0.2 1");
-                            write(pout, ("BOMB" + " " + data.currentPlayer.r.x + " " + data.currentPlayer.r.y + " " + "2"));
-                            System.out.println("BOMB RELEASED");
+                            write(pout, ("BOMB" + " " + data.currentPlayer.r.x + " " + data.currentPlayer.r.y));
                         }
 
 
@@ -151,14 +153,14 @@ static double mapwidth, mapheight,captureradius, visionradius, friction,
             }
         }).start();
 
-        new Thread(()->{
-          while(true){
-            write(pout, motion.placeMoveBomb(data.currentPlayer.r, 0.5));
-            try{
-            Thread.sleep(1000);
-            } catch(InterruptedException ex){}
-          }
-        }).start();
+        // new Thread(()->{
+        //   while(true){
+        //     write(pout, motion.placeMoveBomb(data.currentPlayer.r, 0.5));
+        //     try{
+        //     Thread.sleep(1000);
+        //     } catch(InterruptedException ex){}
+        //   }
+        // }).start();
 
         new Thread(()->{
             while(true){
