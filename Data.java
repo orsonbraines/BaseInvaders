@@ -70,4 +70,19 @@ class Data{
         val += "\n";
         return val;
     }
+    
+    Mine closestMine(){
+        double mindist2 = Double.MAX_VALUE;
+        Mine m = null;
+        for(Mine mine : mines){
+            if(mine.state != Mine.State.OWNED){
+                double dist2 = currentPlayer.r.dist2(mine.r);
+                if(dist2 < mindist2) {
+                    mindist2 = dist2;
+                    m = mine;
+                }
+            }
+        }
+        return m;
+    }
 }

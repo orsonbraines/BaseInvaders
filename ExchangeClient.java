@@ -42,6 +42,8 @@ static double mapwidth, mapheight,captureradius, visionradius, friction,
             int counter = 0;
             try{
                 System.out.println("starting thread");
+                Motion motion = new Motion(new V2d(7500,2500), data.currentPlayer);
+                pout.println("BRAKE");
                 while ((line = bin.readLine()) != null) {
                     //System.out.println("Received {" + line + "}");
                     Scanner sc = new Scanner(line);
@@ -73,9 +75,28 @@ static double mapwidth, mapheight,captureradius, visionradius, friction,
                             data.addBomb(sc.nextDouble(), sc.nextDouble());
                         }
                         
-                        if(counter % 200 == 0) System.out.println(data);
+                        //if(counter % 200 == 0) System.out.println(data);
                         counter++;
                         
+                            //write(pout, Motion.moveTowards(data.currentPlayer.r, data.currentPlayer.v, new V2d(2500,2500)));
+                           // System.out.println("v" + data.currentPlayer.v);
+                        
+                        
+                        Mine closest = data.closestMine();
+                        if(closest == null && data.currentPlayer.r.dist2(motion.target) < 30000){
+                             motion.changeTarget(new V2d(Math.random()*5000, Math.random()*5000));
+                        }
+                        else if(closest != null && !closest.r.equals(motion.target)){
+                            motion.changeTarget(closest.r);
+                        }
+                        
+                        String cmd = motion.move();
+                        if(cmd.length() > 0) {
+                            System.out.println(cmd);
+                            System.out.println(V2d.sub(motion.target, data.currentPlayer.r));
+                            write(pout,cmd);
+                        }
+
                         
                     }
                     else if(type.equals("SCOREBOARD_OUT")){
@@ -109,6 +130,8 @@ static double mapwidth, mapheight,captureradius, visionradius, friction,
                         bombpower = Double.parseDouble(results[20]);
                         scanradius = Double.parseDouble(results[22]);
                         scandelay = Double.parseDouble(results[24]);
+                        
+                        System.out.println("scandelay " +scandelay);
                     }
                 }
             } catch(IOException ex){
@@ -118,26 +141,27 @@ static double mapwidth, mapheight,captureradius, visionradius, friction,
         
         new Thread(()->{
             while(true){
-                pout.println("STATUS");
+                write(pout, "STATUS");
                 try{
                 Thread.sleep(25);
                 } catch(InterruptedException ex){}
             }
         }).start();
         
-        new Thread(()->{
-            while(true){
-                pout.println("SCOREBOARD");
-                try{
-                Thread.sleep(20);
-                } catch(InterruptedException ex){}
-            }
-        }).start();
+        // new Thread(()->{
+            // while(true){
+                // pout.println("SCOREBOARD");
+                // try{
+                // Thread.sleep(20);
+                // } catch(InterruptedException ex){}
+            // }
+        // }).start();
 
         
         Scanner stdin = new Scanner(System.in);
         while(stdin.hasNextLine()){
-            pout.println(stdin.nextLine());
+            write(pout,stdin.nextLine());
+            //pout.println(Motion.moveTowards(data.currentPlayer.r, data.currentPlayer.v, new V2d(2500,2500)));
         }
         
         pout.println("CLOSE_CONNECTION");
@@ -145,5 +169,11 @@ static double mapwidth, mapheight,captureradius, visionradius, friction,
         pout.close();
         bin.close();
     }
-
+    
+    static void write(PrintStream pout, String cmd){
+        synchronized(pout){
+            //System.out.println("outputting cmd : " + cmd);
+            pout.println(cmd);
+        }
+    }
 }
