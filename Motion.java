@@ -26,7 +26,7 @@ public class Motion {
     }
 
     String move(){
-        wrapTarget();
+        //wrapTarget();
         V2d dir = V2d.sub(target, player.r);
         if(player.v.norm() < 0.1 && player.v.norm() / dir.norm() < 0.0002){
             startingDistance = dir.norm();
