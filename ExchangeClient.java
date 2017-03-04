@@ -13,6 +13,8 @@ import java.net.Socket;
  * @author atamarkin2
  */
 public class ExchangeClient {
+    
+    //static Vector<Integer> oldScores, newScores;
 
     /**
      * @param args the command line arguments
@@ -28,7 +30,14 @@ public class ExchangeClient {
         final BufferedReader bin = new BufferedReader(new InputStreamReader(socket.getInputStream()));
         pout.println(args[2] + " " + args[3]);
         
-        final Data data = new Data();
+        
+        final String username = args[2];
+        final Data data = new Data(username);
+        
+        //final Vector<String> users = new Vector<>();
+        //oldScores = new Vector<>();
+        //newScores = new Vector<>();
+        
         
         new Thread(()->{
             String line;
@@ -48,9 +57,7 @@ public class ExchangeClient {
                         
                         int numMines = sc.nextInt();
                         for(int i=0;i<numMines; i++){
-                            String ownerStr = sc.next();
-                            int owner = ownerStr.equals("--") ? -1 : Integer.parseInt(ownerStr); 
-                            data.addMine(owner, sc.nextDouble(), sc.nextDouble());
+                            data.addMine(sc.next(), sc.nextDouble(), sc.nextDouble());
                         }
                         
                         sc.next(); // PLAYERS
@@ -69,6 +76,22 @@ public class ExchangeClient {
                         
                         if(counter % 200 == 0) System.out.println(data);
                         counter++;
+                        
+                        
+                    }
+                    else if(type.equals("SCOREBOARD_OUT")){
+                        //System.out.println(line);
+                        while(sc.hasNext()){
+                            String user = sc.next();
+                            sc.nextInt(); //score
+                            if(user.equals(username)){
+                                data.setMinesOwned(sc.nextInt());
+                                break;
+                            }
+                            else{
+                                sc.nextInt();
+                            }
+                        }
                     }
                 }
             } catch(IOException ex){
@@ -81,6 +104,15 @@ public class ExchangeClient {
                 pout.println("STATUS");
                 try{
                 Thread.sleep(25);
+                } catch(InterruptedException ex){}
+            }
+        }).start();
+        
+        new Thread(()->{
+            while(true){
+                pout.println("SCOREBOARD");
+                try{
+                Thread.sleep(20);
                 } catch(InterruptedException ex){}
             }
         }).start();

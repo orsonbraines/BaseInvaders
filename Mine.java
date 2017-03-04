@@ -1,17 +1,21 @@
 import java.util.*;
 
 class Mine{
-    boolean current;
+    static enum State{
+        UNKNOWN, OWNED, NOT_OWNED 
+    }
+    State state;
     V2d r;
-    int owner;
+    String owner;
     
-    Mine(int owner, double x, double y){
+    Mine(String user, String owner, double x, double y){
         this.owner = owner;
         r = new V2d(x,y);
-        current = true;
+        state = user == owner ? State.OWNED : State.NOT_OWNED;
+        
     }
     
     public String toString(){
-        return "{owner: " + owner + ", x: " + r.x + ", y: " + r.y + ", current: " + current +"}";
+        return "{owner: " + owner + ", x: " + r.x + ", y: " + r.y + ", state: " + state +"}";
     }
 }
