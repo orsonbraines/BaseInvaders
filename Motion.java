@@ -8,7 +8,7 @@ public class Motion {
     double startingDistance;
     boolean accelerating;
     double mapWidth, mapHeight;
-    
+
     Motion(V2d target, Player player, double mapWidth, double mapHeight){
         this.target = target;
         this.player = player;
@@ -17,7 +17,7 @@ public class Motion {
         this.mapWidth = mapWidth;
         this.mapHeight = mapHeight;
     }
-    
+
     void wrapTarget(){
         if(target.x - player.r.x > mapWidth/2) target.x -= mapWidth;
         if(target.x - player.r.x < -mapWidth/2) target.x += mapWidth;
